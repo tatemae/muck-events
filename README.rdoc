@@ -1,6 +1,6 @@
 = muck-events
 
-Description goes here.
+This project is not complete but will eventually support events and calendaring for muck.
 
 == Note on Patches/Pull Requests
  
