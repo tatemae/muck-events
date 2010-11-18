@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rake'
-require 'spec/rake/spectask'
 
 begin
   require 'jeweler'
@@ -12,6 +11,8 @@ begin
     gem.homepage = "http://github.com/tatemae/muck_events"
     gem.authors = ["Justin Ball", "Joel Duffin"]
     gem.add_development_dependency "shoulda"
+    gem.files.exclude 'test/**'
+    gem.test_files.exclude 'test/**'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
@@ -23,7 +24,7 @@ begin
   require 'rcov/rcovtask'
   Rcov::RcovTask.new do |test|
     test.libs << 'test'
-    test.pattern = 'test/**/*_test.rb'
+    test.pattern = 'test/test/**/*_spec.rb'
     test.verbose = true
   end
 rescue LoadError
@@ -35,7 +36,7 @@ end
 desc 'Default: run specs.'
 task :default => :spec
 Spec::Rake::SpecTask.new('spec') do |t|
-  t.spec_files = FileList['test/rails_test/spec/**/*_spec.rb']
+  t.spec_files = FileList['test/spec/**/*_spec.rb']
 end
 
 require 'rake/rdoctask'
