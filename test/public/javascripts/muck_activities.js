@@ -1,14 +1,13 @@
 jQuery(document).ready(function() {
-	apply_comment_methods();
+	apply_activity_ajax_methods();
 });
 
-function apply_comment_methods(){
+function apply_activity_ajax_methods(){
 	setup_comment_submit();
 	hide_comment_boxes();
 	apply_comment_hover();
 	apply_activity_hover();
 	jQuery('.activity-no-comments').hide();
-	
 	jQuery('.activity-has-comments').find('textarea').click(function(){
 		show_comment_box(this);
 	});
@@ -19,6 +18,7 @@ function apply_comment_methods(){
 		}
 	});
 	
+	jQuery(".make-comment").unbind();
 	jQuery('.make-comment').click(function(){
 		var id = this.id.replace('make_comment_activity_', '');
 		var comment_box = jQuery('#comment_activity_' + id);
@@ -36,8 +36,11 @@ function apply_comment_methods(){
 }
 
 function setup_comment_submit(){
+	jQuery(".comment-submit").unbind();
 	jQuery(".comment-submit").click(function() {
-    jQuery(this).siblings('textarea').hide();
+    jQuery(this).hide();
+		jQuery(this).parents('.comment-form-wrapper').siblings('.actor-icon').hide();
+		jQuery(this).siblings('textarea').hide();
 		jQuery(this).parent().append('<p class="comment-loading"><img src="/images/spinner.gif" alt="loading..." /> ' + ADD_COMMENT_MESSAGE + '</p>');
 		var form = jQuery(this).parents('form');
     jQuery.post(form.attr('action'), form.serialize() + '&format=json',
@@ -46,10 +49,14 @@ function setup_comment_submit(){
         if(!json.success){
           jQuery.jGrowl.info(json.message);
         } else {
-					jQuery('.activity-comment').get(0).clone(true);
 					jQuery('.comment-loading').remove();
 					jQuery('.activity-has-comments').find('textarea').show();
-					apply_comment_methods();
+					var comment_box = jQuery('#comment_activity_' + json.parent_id);
+					comment_box.before(json.html);
+					comment_box.removeClass('activity-no-comments');
+					comment_box.addClass('activity-has-comments');
+					comment_box.find('textarea').show();
+					apply_activity_ajax_methods();
 				}
       });
     return false;
@@ -75,7 +82,7 @@ function show_comment_box(obj){
 }
 
 function get_latest_activity_id(){
-  var activities = jQuery('#activity-feed-content').children('.activity-status-update');
+  var activities = jQuery('#activity-feed-content').children('.activity');
   if(activities.length > 0){
     return activities[0].id.replace('activity_', '');
   } else {
